@@ -311,11 +311,13 @@
             padding: 15px;
             border-radius: 0 8px 8px 0;
             transition: transform 0.2s;
+            cursor: pointer;
         }
 
         .work-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+            background-color: #e3f2fd;
         }
 
         .work-name {
@@ -365,6 +367,20 @@
         .language-badge::before {
             content: "🌐 ";
             font-size: 11px;
+        }
+
+        /* 作品跳转提示 */
+        .work-card .jump-hint {
+            font-size: 11px;
+            color: #3498db;
+            margin-top: 8px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-align: right;
+        }
+
+        .work-card:hover .jump-hint {
+            opacity: 1;
         }
 
         /* 加载状态 */
@@ -585,6 +601,11 @@
             return 'low';
         }
 
+        // 跳转到作品类型页查看该作品
+        function goToWork(type, workName) {
+            window.location.href = `works_by_type.html?type=${encodeURIComponent(type)}&work=${encodeURIComponent(workName)}&search=${encodeURIComponent(workName)}`;
+        }
+
         // 搜索并显示人物
         function searchByName(name) {
             const personData = fullData[name];
@@ -625,13 +646,14 @@
                 
                 sortedWorks.forEach(work => {
                     html += `
-                        <div class="work-card">
+                        <div class="work-card" onclick="goToWork('${type}', '${work.work_name.replace(/'/g, "\\'")}')">
                             <div class="work-name">
                                 ${work.work_name}
                                 <span class="work-heat ${getHeatClass(work.heat)}">🔥${work.heat}</span>
                             </div>
                             <div class="role-name">${work.role_name}</div>
                             <div class="language-badge">${work.language || '未知'}</div>
+                            <div class="jump-hint">点击查看所有版本 →</div>
                         </div>
                     `;
                 });
