@@ -171,6 +171,14 @@
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
         .stat-number {
             font-size: 36px;
             font-weight: bold;
@@ -312,6 +320,7 @@
             border-radius: 0 8px 8px 0;
             transition: transform 0.2s;
             cursor: pointer;
+            position: relative;
         }
 
         .work-card:hover {
@@ -353,7 +362,6 @@
             margin-right: 5px;
         }
 
-        /* 语种标签 */
         .language-badge {
             display: inline-block;
             background-color: #9b59b6;
@@ -369,8 +377,7 @@
             font-size: 11px;
         }
 
-        /* 作品跳转提示 */
-        .work-card .jump-hint {
+        .jump-hint {
             font-size: 11px;
             color: #3498db;
             margin-top: 8px;
@@ -409,16 +416,17 @@
             z-index: 1000;
         }
 
-        /* 响应式 */
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-            
             .footer {
                 bottom: 5px;
                 right: 5px;
                 font-size: 10px;
+            }
+            .works-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -442,7 +450,7 @@
                         type="text" 
                         id="nameInput" 
                         class="search-input" 
-                        placeholder="输入名字..."
+                        placeholder="输入CV名字..."
                         autocomplete="off"
                     >
                     <div id="suggestions" class="suggestions-list"></div>
@@ -468,7 +476,7 @@
             </div>
         </div>
 
-        <!-- 当前名字显示区域（查询后显示） -->
+        <!-- 当前名字显示区域 -->
         <div class="name-display" id="nameDisplay" style="display: none;">
             <div class="current-name" id="currentName"></div>
             <div class="name-subtitle" id="nameSubtitle"></div>
@@ -484,12 +492,11 @@
     <div class="footer" id="updateTime"></div>
 
     <script>
-        // 全局变量
         let fullData = null;
         let allNames = [];
         let personsWithStats = [];
+        let globalWorksSet = null; // 全局作品集合（用于去重）
 
-        // 初始化
         async function init() {
             try {
                 const response = await fetch('data.json');
@@ -497,26 +504,16 @@
                 
                 const json = await response.json();
                 
-                // 显示更新时间
                 document.getElementById('updateTime').textContent = 
                     `更新：${json.update_time || '2026-03-18'}`;
                 
                 fullData = json.data;
                 allNames = Object.keys(fullData).sort();
                 
-                // 计算每个人的统计信息
                 calculatePersonStats();
-                
-                // 更新全局统计
                 updateGlobalStats();
-                
-                // 显示所有人物
                 showAllPersons();
-                
-                // 设置自动完成
                 setupAutocomplete();
-                
-                // 检查URL参数
                 checkUrlParam();
                 
             } catch (error) {
@@ -525,7 +522,6 @@
             }
         }
 
-        // 计算每个人的作品数和角色数
         function calculatePersonStats() {
             personsWithStats = allNames.map(name => {
                 const personData = fullData[name];
@@ -546,21 +542,43 @@
                 };
             });
             
-            // 按作品数从多到少排序
             personsWithStats.sort((a, b) => b.workCount - a.workCount);
         }
 
-        // 更新全局统计
-        function updateGlobalStats() {
-            const totalPersons = personsWithStats.length;
+        // 获取全局作品集合（去重后的作品）
+        function getGlobalWorksSet() {
+            if (globalWorksSet) return globalWorksSet;
             
-            let totalWorks = 0;
-            let totalRoles = 0;
+            globalWorksSet = new Set();
             
             allNames.forEach(name => {
                 const personData = fullData[name];
+                const worksByType = personData.works_by_type || {};
+                
+                Object.entries(worksByType).forEach(([type, works]) => {
+                    works.forEach(work => {
+                        // 使用 "作品类型|作品名" 作为唯一标识，因为同一作品在不同类型下算不同作品
+                        const workKey = `${type}|${work.work_name}`;
+                        globalWorksSet.add(workKey);
+                    });
+                });
+            });
+            
+            return globalWorksSet;
+        }
+
+        function updateGlobalStats() {
+            const totalPersons = personsWithStats.length;
+            
+            // 总作品数（去重）
+            const worksSet = getGlobalWorksSet();
+            const totalWorks = worksSet.size;
+            
+            // 总角色数（不去重，每个角色都算）
+            let totalRoles = 0;
+            allNames.forEach(name => {
+                const personData = fullData[name];
                 Object.values(personData.works_by_type).forEach(works => {
-                    totalWorks += works.length;
                     totalRoles += works.length;
                 });
             });
@@ -570,7 +588,6 @@
             document.getElementById('totalRoles').textContent = totalRoles;
         }
 
-        // 显示所有人物
         function showAllPersons() {
             let html = '<div class="persons-grid">';
             
@@ -594,19 +611,23 @@
             document.getElementById('nameDisplay').style.display = 'none';
         }
 
-        // 获取热度样式
         function getHeatClass(heat) {
             if (heat >= 80) return 'high';
             if (heat >= 40) return 'medium';
             return 'low';
         }
 
-        // 跳转到作品类型页查看该作品
-        function goToWork(type, workName) {
-            window.location.href = `works_by_type.html?type=${encodeURIComponent(type)}&work=${encodeURIComponent(workName)}&search=${encodeURIComponent(workName)}`;
+        // 跳转到作品类型页，搜索该作品并定位到指定角色
+        function goToWork(type, workName, roleName) {
+            let url = `works_by_type.html?search=${encodeURIComponent(workName)}`;
+            if (roleName) {
+                // 生成角色ID用于定位
+                const roleId = `${type}_${workName}_${roleName}`.replace(/[^a-zA-Z0-9]/g, '_');
+                url += `&role=${encodeURIComponent(roleId)}`;
+            }
+            window.location.href = url;
         }
 
-        // 搜索并显示人物
         function searchByName(name) {
             const personData = fullData[name];
             if (!personData) return;
@@ -646,14 +667,14 @@
                 
                 sortedWorks.forEach(work => {
                     html += `
-                        <div class="work-card" onclick="goToWork('${type}', '${work.work_name.replace(/'/g, "\\'")}')">
+                        <div class="work-card" onclick="goToWork('${type}', '${work.work_name.replace(/'/g, "\\'")}', '${work.role_name.replace(/'/g, "\\'")}')">
                             <div class="work-name">
                                 ${work.work_name}
                                 <span class="work-heat ${getHeatClass(work.heat)}">🔥${work.heat}</span>
                             </div>
                             <div class="role-name">${work.role_name}</div>
                             <div class="language-badge">${work.language || '未知'}</div>
-                            <div class="jump-hint">点击查看所有版本 →</div>
+                            <div class="jump-hint">点击查看该作品所有角色 →</div>
                         </div>
                     `;
                 });
@@ -668,7 +689,6 @@
             window.history.pushState({}, '', url);
         }
 
-        // 设置自动完成
         function setupAutocomplete() {
             const input = document.getElementById('nameInput');
             const suggestions = document.getElementById('suggestions');

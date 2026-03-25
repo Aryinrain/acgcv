@@ -55,6 +55,12 @@
             color: #666;
             padding: 8px 15px;
             border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            background-color: #f0f2f5;
+            color: #3498db;
         }
 
         .nav-link.active {
@@ -78,6 +84,14 @@
             text-align: center;
         }
 
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
         .stat-number {
             font-size: 36px;
             font-weight: bold;
@@ -92,6 +106,7 @@
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .legend-item {
@@ -121,6 +136,7 @@
             gap: 15px;
             flex-wrap: wrap;
             border-left: 4px solid #9b59b6;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .language-item {
@@ -144,6 +160,7 @@
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .search-box {
@@ -190,6 +207,11 @@
             background-color: #f0f2f5;
             cursor: pointer;
             font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .type-filter:hover {
+            background-color: #e3f2fd;
         }
 
         .type-filter.active {
@@ -213,7 +235,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
         }
 
         .type-title {
@@ -248,10 +269,6 @@
             gap: 15px;
         }
 
-        .works-grid.hidden {
-            display: none;
-        }
-
         /* 作品卡片 */
         .work-card {
             background-color: white;
@@ -259,37 +276,25 @@
             border: 1px solid #e0e0e0;
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .work-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #3498db;
         }
 
         .work-header {
             padding: 15px;
-            cursor: pointer;
             background-color: #f8f9fa;
-            border-bottom: 2px solid transparent;
-            position: relative;
-            transition: all 0.2s;
+            border-bottom: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
 
         .work-header:hover {
             background-color: #e3f2fd;
-        }
-
-        .work-header.expanded {
-            background-color: #3498db;
-            color: white;
-            border-bottom-color: #2980b9;
-        }
-
-        .work-header.expanded .work-name {
-            color: white;
-        }
-
-        .work-header.expanded .heat-badge {
-            background-color: rgba(255,255,255,0.2);
-        }
-
-        .work-info {
-            padding-right: 40px;
         }
 
         .work-name {
@@ -299,8 +304,9 @@
             margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
             flex-wrap: wrap;
+            gap: 8px;
         }
 
         .heat-badge {
@@ -315,41 +321,33 @@
         .heat-badge.medium { background-color: #f39c12; }
         .heat-badge.low { background-color: #27ae60; }
 
-        /* 语种标签容器（作品级） */
-        .work-language-tags {
+        /* 语种标签容器 */
+        .language-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 5px;
             margin-top: 5px;
         }
 
-        .work-language-tag {
+        .language-tag {
             display: inline-block;
             background-color: #9b59b6;
             color: white;
             font-size: 11px;
             padding: 2px 8px;
             border-radius: 12px;
-            opacity: 0.9;
         }
 
-        .work-language-tag::before {
+        .language-tag::before {
             content: "🌐";
             margin-right: 3px;
         }
 
-        .expand-icon {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 14px;
-            color: #666;
-            transition: transform 0.3s;
-        }
-
-        .work-header.expanded .expand-icon {
-            color: white;
-            transform: rotate(90deg);
+        .expand-indicator {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #3498db;
         }
 
         /* 角色列表 */
@@ -357,13 +355,13 @@
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
-            background-color: white;
         }
 
         .roles-container.expanded {
             max-height: 500px;
             overflow-y: auto;
             padding: 15px;
+            border-top: 1px solid #e0e0e0;
         }
 
         .roles-list {
@@ -396,20 +394,13 @@
         .role-item.highlight {
             background-color: #fff3cd;
             border-left-color: #f39c12;
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+            animation: pulse 0.5s ease-in-out;
         }
 
-        .role-item.highlight .role-name {
-            color: #e67e22;
-            font-weight: bold;
-        }
-
-        .role-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
+        @keyframes pulse {
+            0% { transform: scale(1); background-color: #fff3cd; }
+            50% { transform: scale(1.02); background-color: #ffeaa7; }
+            100% { transform: scale(1); background-color: #fff3cd; }
         }
 
         .role-name {
@@ -417,7 +408,6 @@
             color: #2c3e50;
         }
 
-        /* 角色语种标签 */
         .role-language-tag {
             display: inline-block;
             background-color: #9b59b6;
@@ -439,15 +429,8 @@
             background-color: #e3f2fd;
             padding: 2px 8px;
             border-radius: 12px;
-            transition: all 0.2s;
         }
 
-        .role-item:hover .person-name {
-            background-color: #3498db;
-            color: white;
-        }
-
-        /* 空状态 */
         .no-results {
             text-align: center;
             padding: 40px;
@@ -455,7 +438,6 @@
             font-size: 16px;
         }
 
-        /* 页脚 */
         .footer {
             position: fixed;
             bottom: 10px;
@@ -477,15 +459,12 @@
                 right: 5px;
                 font-size: 10px;
             }
-            .work-info {
-                padding-right: 30px;
+            .works-grid {
+                grid-template-columns: 1fr;
             }
             .role-item {
                 flex-direction: column;
                 align-items: flex-start;
-            }
-            .role-left {
-                width: 100%;
             }
             .person-name {
                 align-self: flex-end;
@@ -552,11 +531,11 @@
     <script>
         let fullData = null;
         let worksByType = {};
+        let allLanguages = new Set();
         let currentFilter = 'all';
         let currentSearch = '';
         let expandedWorks = new Set();
-        let allLanguages = new Set();
-        let targetRoleId = null; // 目标角色ID
+        let highlightRoleId = null;
 
         async function init() {
             try {
@@ -587,20 +566,14 @@
             const urlParams = new URLSearchParams(window.location.search);
             const search = urlParams.get('search');
             const role = urlParams.get('role');
-            const type = urlParams.get('type');
-            const work = urlParams.get('work');
             
             if (search) {
                 currentSearch = search;
                 document.getElementById('searchInput').value = search;
             }
             
-            if (type) {
-                currentFilter = type;
-            }
-            
-            if (work && role) {
-                targetRoleId = `${type}_${work}_${role}`.replace(/[^a-zA-Z0-9]/g, '_');
+            if (role) {
+                highlightRoleId = role;
             }
         }
 
@@ -620,22 +593,20 @@
                         if (!worksByType[type][workName]) {
                             worksByType[type][workName] = {
                                 roles: [],
-                                maxHeat: 0,
-                                workLanguages: new Set()
+                                maxHeat: work.heat,
+                                languages: new Set()
                             };
                         }
-                        
-                        const roleId = `${type}_${workName}_${work.role_name}`.replace(/[^a-zA-Z0-9]/g, '_');
                         
                         worksByType[type][workName].roles.push({
                             role: work.role_name,
                             person: person,
                             language: work.language,
                             heat: work.heat,
-                            id: roleId
+                            roleId: `${type}_${workName}_${work.role_name}_${person}`.replace(/[^a-zA-Z0-9]/g, '_')
                         });
                         
-                        worksByType[type][workName].workLanguages.add(work.language);
+                        worksByType[type][workName].languages.add(work.language);
                         allLanguages.add(work.language);
                         
                         if (work.heat > worksByType[type][workName].maxHeat) {
@@ -645,7 +616,7 @@
                 });
             });
             
-            // 排序
+            // 对每个类型下的作品按最高热度排序
             Object.keys(worksByType).forEach(type => {
                 const worksArray = Object.entries(worksByType[type]);
                 
@@ -658,6 +629,7 @@
                 
                 const sortedWorks = {};
                 worksArray.forEach(([workName, data]) => {
+                    // 对角色按热度排序
                     data.roles.sort((a, b) => {
                         if (b.heat !== a.heat) {
                             return b.heat - a.heat;
@@ -727,70 +699,114 @@
             render();
         }
 
-        // 滚动到目标角色
-        function scrollToTargetRole() {
-            if (!targetRoleId) return;
-            
-            setTimeout(() => {
-                const targetElement = document.getElementById(targetRoleId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
-                    });
-                    
-                    // 添加高亮效果
-                    targetElement.classList.add('highlight');
-                    setTimeout(() => {
-                        targetElement.classList.remove('highlight');
-                    }, 3000);
-                }
-            }, 500); // 等待渲染完成
+        function goToPerson(personName) {
+            window.location.href = `index.html?name=${encodeURIComponent(personName)}`;
+        }
+
+        // 滚动到高亮角色
+        function scrollToHighlightedRole() {
+            if (highlightRoleId) {
+                setTimeout(() => {
+                    const element = document.getElementById(highlightRoleId);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        element.classList.add('highlight');
+                        setTimeout(() => {
+                            element.classList.remove('highlight');
+                        }, 3000);
+                    }
+                    // 清除URL中的role参数
+                    const url = new URL(window.location);
+                    url.searchParams.delete('role');
+                    window.history.replaceState({}, '', url);
+                    highlightRoleId = null;
+                }, 300);
+            }
         }
 
         function render() {
             const types = currentFilter === 'all' 
-                ? Object.keys(worksByType).sort()
+                ? Object.keys(worksByType).sort((a, b) => {
+                    const countA = Object.keys(worksByType[a]).length;
+                    const countB = Object.keys(worksByType[b]).length;
+                    if (countB !== countA) return countB - countA;
+                    return a.localeCompare(b, 'zh-CN');
+                })
                 : [currentFilter];
             
             let html = '';
             let typeIndex = 1;
             let hasAnyResults = false;
+            let matchedRoles = []; // 记录匹配的角色ID
             
             types.forEach(type => {
                 const works = worksByType[type];
                 let filteredWorks = {};
                 let typeHasMatch = false;
+                let worksToExpand = []; // 需要展开的作品
                 
-                Object.entries(works).forEach(([name, data]) => {
+                Object.entries(works).forEach(([workName, data]) => {
+                    let shouldShow = true;
+                    let hasRoleMatch = false;
+                    let matchedRolesInWork = [];
+                    
                     if (currentSearch) {
                         const searchLower = currentSearch.toLowerCase();
-                        const workMatch = name.toLowerCase().includes(searchLower);
-                        const roleMatch = data.roles.some(r => 
+                        const workMatch = workName.toLowerCase().includes(searchLower);
+                        
+                        // 检查角色匹配
+                        matchedRolesInWork = data.roles.filter(r => 
                             r.role.toLowerCase().includes(searchLower)
                         );
-                        const langMatch = data.roles.some(r => 
-                            r.language.toLowerCase().includes(searchLower)
+                        const langMatch = Array.from(data.languages).some(lang => 
+                            lang.toLowerCase().includes(searchLower)
                         );
                         
-                        if (workMatch || roleMatch || langMatch) {
-                            filteredWorks[name] = data;
+                        hasRoleMatch = matchedRolesInWork.length > 0;
+                        
+                        // 搜索作品时：只显示匹配的作品
+                        // 搜索角色时：显示包含该角色的作品
+                        if (workMatch || hasRoleMatch || langMatch) {
+                            filteredWorks[workName] = {
+                                ...data,
+                                roles: data.roles, // 显示所有角色，但高亮匹配的
+                                isFiltered: false,
+                                matchedRoles: matchedRolesInWork
+                            };
                             typeHasMatch = true;
                             
-                            // 如果有角色匹配，展开该作品
-                            if (roleMatch) {
-                                const workId = `${type}_${name}`.replace(/[^a-zA-Z0-9]/g, '_');
-                                expandedWorks.add(workId);
+                            // 如果有角色匹配，记录需要展开的作品和高亮角色
+                            if (hasRoleMatch) {
+                                worksToExpand.push(workName);
+                                matchedRolesInWork.forEach(r => {
+                                    matchedRoles.push(r.roleId);
+                                });
                             }
+                        } else {
+                            shouldShow = false;
                         }
                     } else {
-                        filteredWorks[name] = data;
+                        filteredWorks[workName] = {
+                            ...data,
+                            matchedRoles: []
+                        };
                         typeHasMatch = true;
+                    }
+                    
+                    // 如果需要展开，加入expandedWorks
+                    if (worksToExpand.includes(workName)) {
+                        const workId = `${type}_${workName}`.replace(/[^a-zA-Z0-9]/g, '_');
+                        expandedWorks.add(workId);
                     }
                 });
                 
                 if (!typeHasMatch) return;
                 hasAnyResults = true;
+                
+                const workCount = Object.keys(filteredWorks).length;
+                const roleCount = Object.values(filteredWorks).reduce(
+                    (sum, w) => sum + w.roles.length, 0
+                );
                 
                 html += `
                     <div class="type-section">
@@ -800,7 +816,8 @@
                                 <span>${type}</span>
                             </div>
                             <div class="type-stats">
-                                <span>${Object.keys(filteredWorks).length}部</span>
+                                <span>${workCount}部作品</span>
+                                <span>${roleCount}个角色</span>
                             </div>
                         </div>
                         <div class="works-grid">
@@ -809,32 +826,34 @@
                 Object.entries(filteredWorks).forEach(([workName, data]) => {
                     const workId = `${type}_${workName}`.replace(/[^a-zA-Z0-9]/g, '_');
                     const isExpanded = expandedWorks.has(workId);
+                    const matchedRoleIds = new Set(data.matchedRoles.map(r => r.roleId));
                     
-                    const workLanguageTags = Array.from(data.workLanguages)
+                    const languageTags = Array.from(data.languages)
                         .sort()
-                        .map(lang => `<span class="work-language-tag">${lang}</span>`)
+                        .map(lang => `<span class="language-tag">${lang}</span>`)
                         .join('');
                     
                     html += `
                         <div class="work-card">
-                            <div class="work-header ${isExpanded ? 'expanded' : ''}" 
-                                 onclick="toggleWork('${workId}')">
-                                <div class="work-info">
+                            <div class="work-header" onclick="toggleWork('${workId}')">
+                                <div>
                                     <div class="work-name">
                                         ${workName}
                                         <span class="heat-badge ${getHeatClass(data.maxHeat)}">🔥${data.maxHeat}</span>
                                     </div>
-                                    <div class="work-language-tags">
-                                        ${workLanguageTags}
+                                    <div class="language-tags">
+                                        ${languageTags}
+                                    </div>
+                                    <div class="expand-indicator">
+                                        ${isExpanded ? '▼ 点击收起角色' : '▶ 点击展开角色'} (${data.roles.length}个角色)
                                     </div>
                                 </div>
-                                <span class="expand-icon">▶</span>
                             </div>
                             <div class="roles-container ${isExpanded ? 'expanded' : ''}">
                                 <div class="roles-list">
                                     ${data.roles.map(r => `
-                                        <div class="role-item" id="${r.id}" onclick="goToPerson('${r.person}')">
-                                            <div class="role-left">
+                                        <div class="role-item" id="${r.roleId}" onclick="goToPerson('${r.person}')" ${matchedRoleIds.has(r.roleId) ? 'data-matched="true"' : ''}>
+                                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                                                 <span class="role-name">${r.role}</span>
                                                 <span class="role-language-tag">${r.language}</span>
                                             </div>
@@ -852,24 +871,32 @@
             });
             
             if (!hasAnyResults && currentSearch) {
-                html = `<div class="no-results">没有找到包含 "${currentSearch}" 的作品</div>`;
+                html = `<div class="no-results">没有找到包含 "${currentSearch}" 的作品或角色</div>`;
             }
             
             document.getElementById('typesContainer').innerHTML = html;
             
-            // 如果有目标角色，滚动到该角色
-            scrollToTargetRole();
-        }
-
-        function goToPerson(name) {
-            window.location.href = `index.html?name=${encodeURIComponent(name)}`;
+            // 如果有匹配的角色，设置高亮ID并滚动
+            if (matchedRoles.length > 0) {
+                // 使用第一个匹配的角色作为高亮目标
+                const targetRoleId = highlightRoleId || matchedRoles[0];
+                if (targetRoleId) {
+                    setTimeout(() => {
+                        const element = document.getElementById(targetRoleId);
+                        if (element) {
+                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            element.classList.add('highlight');
+                            setTimeout(() => {
+                                element.classList.remove('highlight');
+                            }, 3000);
+                        }
+                    }, 100);
+                }
+            }
         }
 
         function performSearch() {
             currentSearch = document.getElementById('searchInput').value;
-            targetRoleId = null; // 清除目标角色
-            render();
-            
             // 更新URL
             const url = new URL(window.location);
             if (currentSearch) {
@@ -877,22 +904,19 @@
             } else {
                 url.searchParams.delete('search');
             }
+            url.searchParams.delete('role');
             window.history.pushState({}, '', url);
+            render();
         }
 
         function clearSearch() {
             document.getElementById('searchInput').value = '';
             currentSearch = '';
-            targetRoleId = null;
-            expandedWorks.clear();
-            render();
-            
             const url = new URL(window.location);
             url.searchParams.delete('search');
-            url.searchParams.delete('type');
-            url.searchParams.delete('work');
             url.searchParams.delete('role');
             window.history.pushState({}, '', url);
+            render();
         }
 
         document.getElementById('searchBtn').onclick = performSearch;
